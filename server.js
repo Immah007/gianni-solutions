@@ -1,26 +1,20 @@
-const http = require('http');
-const fs = require('fs');
+// server.js
+
+const express = require('express');
 const path = require('path');
 
+const app = express();
 const PORT = 3000;
 
-http.createServer((req, res) => {
-  if (req.url === '/' || req.url === '/index.html') {
-    const filePath = path.join(__dirname, 'index.html');
+// Serve static files from "public"
+app.use(express.static(path.join(__dirname, 'public')));
 
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end('Error loading index.html');
-      } else {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
-      }
-    });
-  } else {
-    res.writeHead(404);
-    res.end('Not Found');
-  }
-}).listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+// Explicitly serve index.html at root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
